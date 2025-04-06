@@ -1,0 +1,6 @@
+Esta pasta contém arquivos de logo:
+
+- LOGO.png - Logo principal da Conecta Soluções
+- LOGO 2.png - Logo alternativo com fundo transparente
+
+Utilize o logo conforme diretrizes de identidade visual da empresa.

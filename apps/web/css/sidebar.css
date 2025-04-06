@@ -1,0 +1,163 @@
+/* Estilos complementares para o sidebar */
+
+/* Estilos específicos para campos de dobradiças */
+.dobradicaContainer {
+  display: flex;
+  align-items: center;
+  margin-bottom: 10px;
+  padding-bottom: 10px;
+  border-bottom: 1px solid #eaeaea;
+}
+
+.dobradicaContainer:last-child {
+  margin-bottom: 0;
+  padding-bottom: 0;
+  border-bottom: none;
+}
+
+.dobradicaContainerTop {
+  display: flex;
+  justify-content: space-between;
+  margin-bottom: 4px;
+}
+
+.dobradicaRow {
+  display: flex;
+  gap: 10px;
+  align-items: center;
+  margin-bottom: 6px;
+}
+
+.dobradicaRow:last-child {
+  margin-bottom: 0;
+}
+
+.dobradicaTitle {
+  font-size: 13px;
+  font-weight: 500;
+  color: #555;
+  width: 100px;
+}
+
+.dobradicaInput {
+  width: 60px;
+  text-align: center;
+  font-size: 12px;
+  padding: 4px 8px;
+  border: 1px solid #ced4da;
+  border-radius: 4px;
+}
+
+.dobradicaLabel {
+  font-size: 12px;
+  width: 70px;
+  color: #6c757d;
+}
+
+.dobradicaAuto {
+  margin-left: auto;
+  font-size: 11px;
+  color: #0d6efd;
+  cursor: pointer;
+  padding: 2px 5px;
+  text-decoration: underline;
+  background: none;
+  border: none;
+}
+
+.dobradicaHeader {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  font-size: 13px;
+  font-weight: 500;
+  color: #333;
+  margin-bottom: 8px;
+  padding-bottom: 4px;
+  border-bottom: 1px solid #eaeaea;
+}
+
+/* Estilos para campos de cota no puxador */
+#puxadorCotasCampos {
+  background-color: #f8f9fa;
+  border-radius: 4px;
+  padding: 12px;
+  border: 1px solid #eaeaea;
+}
+
+.cota-field {
+  display: flex;
+  align-items: center;
+  margin-bottom: 8px;
+}
+
+.cota-field:last-child {
+  margin-bottom: 0;
+}
+
+.cota-label {
+  font-size: 12px;
+  font-weight: 500;
+  color: #6c757d;
+  width: 80px;
+}
+
+.cota-input {
+  width: 70px;
+  text-align: center;
+  font-size: 12px;
+  padding: 4px 8px;
+  border: 1px solid #ced4da;
+  border-radius: 4px;
+}
+
+/* Estilos para modais */
+.config-list-item {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 12px 16px;
+  border-bottom: 1px solid #eaeaea;
+  cursor: pointer;
+  transition: background-color 0.15s ease;
+}
+
+.config-list-item:hover {
+  background-color: #f8f9fa;
+}
+
+.config-list-item:last-child {
+  border-bottom: none;
+}
+
+.config-name {
+  font-weight: 500;
+  color: #333;
+}
+
+.config-date {
+  font-size: 12px;
+  color: #6c757d;
+}
+
+.config-actions {
+  display: flex;
+  gap: 8px;
+}
+
+.config-action-btn {
+  background: none;
+  border: none;
+  font-size: 14px;
+  color: #6c757d;
+  cursor: pointer;
+  padding: 4px;
+}
+
+.config-action-btn:hover {
+  color: #0d6efd;
+}
+
+.config-action-btn.delete:hover {
+  color: #dc3545;
+}

@@ -1,0 +1,51 @@
+{
+  "env": {
+    "browser": true,
+    "es2021": true,
+    "jest": true
+  },
+  "extends": "eslint:recommended",
+  "parserOptions": {
+    "ecmaVersion": "latest",
+    "sourceType": "module"
+  },
+  "globals": {
+    "window": true,
+    "document": true,
+    "localStorage": true,
+    "console": true,
+    "module": true,
+    "require": true,
+    "process": true,
+    "exports": true,
+    "global": true,
+    "jest": true,
+    "describe": true,
+    "it": true,
+    "test": true,
+    "expect": true,
+    "beforeEach": true,
+    "afterEach": true
+  },
+  "rules": {
+    "indent": [
+      "error",
+      2
+    ],
+    "quotes": [
+      "error",
+      "single",
+      { "avoidEscape": true }
+    ],
+    "semi": [
+      "error",
+      "always"
+    ],
+    "no-unused-vars": "warn",
+    "brace-style": [
+      "error", 
+      "1tbs", 
+      { "allowSingleLine": true }
+    ]
+  }
+}

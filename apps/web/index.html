@@ -1,0 +1,236 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Conecta Portas - Sistema de Desenho</title>
+  <!-- Favicon inline para evitar 404 -->
+  <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>🚪</text></svg>">
+  <!-- Bootstrap 5 CSS (apenas para o sidebar) -->
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.2.3/dist/css/bootstrap.min.css" rel="stylesheet">
+  <!-- Fontes e estilos da aplicação original -->
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="css/styles.css">
+  <link rel="stylesheet" href="css/bootstrap-sidebar.css">
+  <!-- Bootstrap Icons -->
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.0/font/bootstrap-icons.css">
+  <!-- HTML2PDF para exportação em PDF -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js" integrity="sha512-GsLlZN/3F2ErC5ifS5QtgpiJtWd43JWSuIgh7mbzZ8zBps+dvLusV+eNQATqgA/HdeKFVgA5v3S/cIrLF7QnIg==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+  <!-- Compatibilidade com navegadores mais antigos -->
+  <script>
+    // Verificar se o navegador suporta módulos ES
+    var suportaModulos = 'noModule' in HTMLScriptElement.prototype;
+  </script>
+</head>
+
+<body>
+  <header class="header">
+    <div class="header-content">
+      <div class="logo-container">
+        <img src="LOGO 2.png" alt="Logo Conecta" class="logo" id="logoImage">
+      </div>
+      <span id="parceiro-nome">Conecta Soluções</span>
+    </div>
+  </header>
+
+  <!-- Container principal -->
+  <div id="container">
+    <!-- SIDEBAR: PAINEL DE CONTROLE com Bootstrap 5 -->
+    <div class="sidebar-bootstrap">
+      <div class="sidebar-header">
+        <h2 class="sidebar-title">Configuração da Porta</h2>
+      </div>
+      
+      <!-- Accordion do Bootstrap para seções expansíveis -->
+      <div class="accordion accordion-flush" id="configAccordion">
+        
+        <!-- Seção: Informações Básicas -->
+        <div class="accordion-item">
+          <h2 class="accordion-header" id="headingInfos">
+            <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapseInfos" aria-expanded="false" aria-controls="collapseInfos">
+              <i class="bi bi-info-circle section-icon"></i>Informações Básicas
+            </button>
+          </h2>
+          <div id="collapseInfos" class="accordion-collapse collapse" aria-labelledby="headingInfos" data-bs-parent="#configAccordion">
+            <div class="accordion-body">
+              <div class="mb-3">
+                <label for="clienteInput" class="form-label">Cliente</label>
+                <input type="text" class="form-control" id="clienteInput" maxlength="30" required />
+              </div>
+              <div class="mb-3">
+                <label for="ambienteInput" class="form-label">Ambiente</label>
+                <input type="text" class="form-control" id="ambienteInput" maxlength="30" required />
+              </div>
+              <div class="mb-3">
+                <label for="larguraInput" class="form-label">Largura (mm)</label>
+                <input type="number" class="form-control" id="larguraInput" value="700" min="150" max="2000" required />
+                <div class="invalid-feedback" id="larguraError">Largura deve ser entre 150 e 2000 mm</div>
+              </div>
+              <div class="mb-3">
+                <label for="alturaInput" class="form-label">Altura (mm)</label>
+                <input type="number" class="form-control" id="alturaInput" value="2100" min="300" max="3000" required 
+                       onchange="if(this.value >= 300 && this.value <= 3000) { 
+                         var dobSelect = document.getElementById('numDobradicasInput'); 
+                         dobSelect.value = '2'; 
+                         var event = new Event('change'); 
+                         dobSelect.dispatchEvent(event);
+                       }" />
+                <div class="invalid-feedback" id="alturaError">Altura deve ser entre 300 e 3000 mm</div>
+              </div>
+              <div class="mb-3">
+                <label for="quantidadeInput" class="form-label">Quantidade</label>
+                <input type="number" class="form-control" id="quantidadeInput" value="1" min="1" max="100" required />
+                <div class="invalid-feedback" id="quantidadeError">Quantidade deve ser entre 1 e 100</div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Demais seções omitidas por brevidade... -->
+
+      </div>
+
+      <!-- Botões e ações -->
+      <div class="actions-container">
+        <button type="button" class="btn btn-primary action-btn" id="salvarBtn">
+          <i class="bi bi-save"></i> Salvar
+        </button>
+        <button type="button" class="btn btn-secondary action-btn" id="abrirSalvosBtn">
+          <i class="bi bi-folder"></i> Abrir
+        </button>
+        <button type="button" class="btn btn-success action-btn" id="imprimirBtn">
+          <i class="bi bi-printer"></i> Imprimir
+        </button>
+        <button type="button" class="btn btn-info action-btn" id="exportarPDFBtn">
+          <i class="bi bi-file-pdf"></i> PDF
+        </button>
+        <button type="button" class="btn btn-warning action-btn d-none" id="diagnosticarBtn">
+          <i class="bi bi-bug"></i> Debug
+        </button>
+      </div>
+    </div>
+
+    <!-- ÁREA DE DESENHO (formato A4) -->
+    <div id="drawing-area" class="drawing-area">
+      <div id="a4-container" class="a4-container">
+        <!-- Aqui será injetado o SVG da porta -->
+        <div id="porta-container"></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Modal para salvar configuração -->
+  <div class="modal fade" id="salvarModal" tabindex="-1" aria-labelledby="salvarModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title" id="salvarModalLabel">Salvar Configuração</h5>
+          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Fechar"></button>
+        </div>
+        <div class="modal-body">
+          <div class="mb-3">
+            <label for="nomeConfigInput" class="form-label">Nome da Configuração</label>
+            <input type="text" class="form-control" id="nomeConfigInput">
+          </div>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
+          <button type="button" class="btn btn-primary" id="confirmarSalvarBtn">Salvar</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Modal para abrir configuração salva -->
+  <div class="modal fade" id="abrirModal" tabindex="-1" aria-labelledby="abrirModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title" id="abrirModalLabel">Configurações Salvas</h5>
+          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Fechar"></button>
+        </div>
+        <div class="modal-body">
+          <div class="list-group" id="configSalvasList">
+            <!-- Lista de configurações salvas carregada dinamicamente -->
+          </div>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Modal para diagnóstico -->
+  <div class="modal fade" id="diagnosticoModal" tabindex="-1" aria-labelledby="diagnosticoModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-xl">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title" id="diagnosticoModalLabel">Diagnóstico do Sistema</h5>
+          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Fechar"></button>
+        </div>
+        <div class="modal-body">
+          <div class="diag-section">
+            <h6>Configuração Atual</h6>
+            <pre id="configAtualOutput" class="pre-diag"></pre>
+          </div>
+          <div class="diag-section">
+            <h6>Estado do Armazenamento</h6>
+            <pre id="armazenamentoOutput" class="pre-diag"></pre>
+          </div>
+          <div class="diag-section">
+            <h6>Informações do Navegador</h6>
+            <div id="navegadorOutput" class="pre-diag"></div>
+          </div>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-primary" id="limparStorageBtn">Limpar Storage</button>
+          <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Fechar</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Modal para imprimir -->
+  <div class="modal fade" id="imprimirModal" tabindex="-1" aria-labelledby="imprimirModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title" id="imprimirModalLabel">Imprimir</h5>
+          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Fechar"></button>
+        </div>
+        <div class="modal-body">
+          <p>Preparando para impressão...</p>
+          <div class="progress">
+            <div class="progress-bar progress-bar-striped progress-bar-animated" role="progressbar" aria-valuenow="100" aria-valuemin="0" aria-valuemax="100" style="width: 100%"></div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Bootstrap 5 JS (apenas para o sidebar) -->
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.2.3/dist/js/bootstrap.bundle.min.js"></script>
+  <!-- Script principal de importação de todos os módulos -->
+  <script src="js/drawing/utils.js"></script>
+  <script src="js/drawing/config.js"></script>
+  <script src="js/drawing/core.js"></script>
+  <script src="js/drawing/elements.js"></script>
+  <script src="js/drawing/door-types.js"></script>
+  <script src="js/drawing/annotations.js"></script>
+  <script src="js/drawing/index.js"></script>
+  <script src="js/drawing.js"></script>
+  <script src="js/diagnostico.js"></script>
+  <script src="js/utils.js"></script>
+  <script src="js/storage.js"></script>
+  <script src="js/initialize.js"></script>
+  <script src="js/sidebar.js"></script>
+  <script src="js/printing.js"></script>
+  <script src="js/notifications.js"></script>
+  <script src="js/form-handlers.js"></script>
+  <script src="js/ui-controls.js"></script>
+  <script src="js/main.js"></script>
+</body>
+
+</html>

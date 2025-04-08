@@ -1,0 +1,448 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Calculadora de Materiais - Portões e Perfis</title>
+  
+  <!-- Bootstrap CSS -->
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.6.0/dist/css/bootstrap.min.css">
+  <!-- Font Awesome -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css">
+  
+  <style>
+    body {
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      padding-top: 20px;
+      padding-bottom: 40px;
+      background-color: #f8f9fa;
+    }
+    
+    .container {
+      max-width: 960px;
+    }
+    
+    .header {
+      padding-bottom: 20px;
+      margin-bottom: 30px;
+      border-bottom: 1px solid #e5e5e5;
+      text-align: center;
+    }
+    
+    .form-section {
+      padding: 15px;
+      background-color: #f9f9f9;
+      border-radius: 5px;
+      margin-bottom: 15px;
+    }
+    
+    .section-title {
+      margin-bottom: 15px;
+      font-weight: 600;
+      color: #495057;
+    }
+    
+    /* Notificação */
+    .notificacao {
+      position: fixed;
+      top: 20px;
+      right: 20px;
+      padding: 15px 20px;
+      border-radius: 4px;
+      color: white;
+      font-weight: 500;
+      z-index: 1050;
+      transform: translateY(-100px);
+      opacity: 0;
+      transition: all 0.3s ease-in-out;
+      box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    }
+    
+    .notificacao.mostrar {
+      transform: translateY(0);
+      opacity: 1;
+    }
+    
+    .notificacao-success {
+      background-color: #28a745;
+    }
+    
+    .notificacao-error {
+      background-color: #dc3545;
+    }
+    
+    .notificacao-warning {
+      background-color: #ffc107;
+      color: #212529;
+    }
+    
+    .notificacao-info {
+      background-color: #17a2b8;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <div class="header">
+      <h2>Calculadora de Materiais para Portões</h2>
+      <p class="lead">Uma ferramenta para estimar materiais e custos para fabricação de portões.</p>
+    </div>
+    
+    <!-- Elemento para notificações -->
+    <div id="notificacao" class="notificacao"></div>
+    
+    <!-- Componente da calculadora -->
+    <div class="row">
+      <div class="col-md-12">
+        <div class="card calculadora-materiais">
+          <div class="card-header bg-primary text-white">
+            <h5 class="mb-0">Calculadora de Materiais</h5>
+          </div>
+          <div class="card-body">
+            <form id="calculadoraMateriaisForm">
+              <div class="form-section">
+                <h6 class="section-title">Dimensões do Portão</h6>
+                <div class="row">
+                  <div class="col-md-4">
+                    <div class="form-group">
+                      <label for="larguraPortao">Largura (m)</label>
+                      <input type="number" class="form-control" id="larguraPortao" min="0.5" max="10" step="0.1" value="3" required>
+                      <div id="larguraPortaoError" class="invalid-feedback"></div>
+                    </div>
+                  </div>
+                  <div class="col-md-4">
+                    <div class="form-group">
+                      <label for="alturaPortao">Altura (m)</label>
+                      <input type="number" class="form-control" id="alturaPortao" min="0.5" max="5" step="0.1" value="2" required>
+                      <div id="alturaPortaoError" class="invalid-feedback"></div>
+                    </div>
+                  </div>
+                  <div class="col-md-4">
+                    <div class="form-group">
+                      <label for="espessuraPerfil">Espessura do Perfil (cm)</label>
+                      <input type="number" class="form-control" id="espessuraPerfil" min="1" max="10" step="0.5" value="4" required>
+                      <div id="espessuraPerfilError" class="invalid-feedback"></div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              <div class="form-section mt-4">
+                <h6 class="section-title">Preços dos Materiais</h6>
+                <div class="row">
+                  <div class="col-md-3">
+                    <div class="form-group">
+                      <label for="precoPerfilMetro">Preço do Perfil (R$/m)</label>
+                      <input type="number" class="form-control" id="precoPerfilMetro" min="1" max="1000" step="0.5" value="45" required>
+                      <div id="precoPerfilMetroError" class="invalid-feedback"></div>
+                    </div>
+                  </div>
+                  <div class="col-md-3">
+                    <div class="form-group">
+                      <label for="precoParafusoUnidade">Preço do Parafuso (R$/un)</label>
+                      <input type="number" class="form-control" id="precoParafusoUnidade" min="0.1" max="100" step="0.1" value="0.5" required>
+                      <div id="precoParafusoUnidadeError" class="invalid-feedback"></div>
+                    </div>
+                  </div>
+                  <div class="col-md-3">
+                    <div class="form-group">
+                      <label for="precoDobradicaUnidade">Preço da Dobradiça (R$/un)</label>
+                      <input type="number" class="form-control" id="precoDobradicaUnidade" min="1" max="500" step="0.5" value="25" required>
+                      <div id="precoDobradicaUnidadeError" class="invalid-feedback"></div>
+                    </div>
+                  </div>
+                  <div class="col-md-3">
+                    <div class="form-group">
+                      <label for="precoFechaduraUnidade">Preço da Fechadura (R$/un)</label>
+                      <input type="number" class="form-control" id="precoFechaduraUnidade" min="1" max="1000" step="0.5" value="120" required>
+                      <div id="precoFechaduraUnidadeError" class="invalid-feedback"></div>
+                    </div>
+                  </div>
+                </div>
+                <div class="row mt-2">
+                  <div class="col-md-3">
+                    <div class="form-group">
+                      <label for="pesoPorMetro">Peso do Perfil (kg/m)</label>
+                      <input type="number" class="form-control" id="pesoPorMetro" min="0.1" max="50" step="0.1" value="1.2" required>
+                      <div id="pesoPorMetroError" class="invalid-feedback"></div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              <div class="mt-4">
+                <button type="button" id="calcularMateriaisBtn" class="btn btn-primary">Calcular Materiais</button>
+                <button type="button" id="limparCalculadoraBtn" class="btn btn-outline-secondary ml-2">Limpar</button>
+              </div>
+            </form>
+
+            <div id="resultadoCalculoMateriais" class="mt-4 d-none">
+              <h6 class="section-title">Resultado do Cálculo</h6>
+              
+              <div class="table-responsive">
+                <table class="table table-striped table-bordered">
+                  <thead class="thead-dark">
+                    <tr>
+                      <th colspan="2">Dimensões do Portão</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    <tr>
+                      <td>Largura</td>
+                      <td id="resultadoLargura">-</td>
+                    </tr>
+                    <tr>
+                      <td>Altura</td>
+                      <td id="resultadoAltura">-</td>
+                    </tr>
+                    <tr>
+                      <td>Espessura do Perfil</td>
+                      <td id="resultadoEspessura">-</td>
+                    </tr>
+                  </tbody>
+                </table>
+              </div>
+
+              <div class="table-responsive mt-3">
+                <table class="table table-striped table-bordered">
+                  <thead class="thead-dark">
+                    <tr>
+                      <th colspan="2">Materiais Necessários</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    <tr>
+                      <td>Total de Perfis</td>
+                      <td id="resultadoPerfilTotal">-</td>
+                    </tr>
+                    <tr>
+                      <td>Peso Aproximado</td>
+                      <td id="resultadoPeso">-</td>
+                    </tr>
+                    <tr>
+                      <td>Parafusos</td>
+                      <td id="resultadoParafusos">-</td>
+                    </tr>
+                    <tr>
+                      <td>Dobradiças</td>
+                      <td id="resultadoDobradiças">-</td>
+                    </tr>
+                    <tr>
+                      <td>Fechaduras</td>
+                      <td id="resultadoFechaduras">-</td>
+                    </tr>
+                  </tbody>
+                </table>
+              </div>
+
+              <div class="table-responsive mt-3">
+                <table class="table table-striped table-bordered">
+                  <thead class="thead-dark">
+                    <tr>
+                      <th colspan="2">Custos Estimados</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    <tr>
+                      <td>Custo dos Perfis</td>
+                      <td id="resultadoCustoPerfil">-</td>
+                    </tr>
+                    <tr>
+                      <td>Custo dos Parafusos</td>
+                      <td id="resultadoCustoParafusos">-</td>
+                    </tr>
+                    <tr>
+                      <td>Custo das Dobradiças</td>
+                      <td id="resultadoCustoDobradiças">-</td>
+                    </tr>
+                    <tr>
+                      <td>Custo das Fechaduras</td>
+                      <td id="resultadoCustoFechaduras">-</td>
+                    </tr>
+                    <tr class="table-primary font-weight-bold">
+                      <td>Custo Total Estimado</td>
+                      <td id="resultadoCustoTotal">-</td>
+                    </tr>
+                  </tbody>
+                </table>
+              </div>
+
+              <div class="mt-3">
+                <button type="button" id="imprimirResultadoBtn" class="btn btn-info">
+                  <i class="fa fa-print"></i> Imprimir Resultado
+                </button>
+                <button type="button" id="exportarPdfBtn" class="btn btn-secondary ml-2">
+                  <i class="fa fa-file-pdf"></i> Exportar PDF
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+    
+    <footer class="mt-5 pt-4 text-muted text-center text-small">
+      <p class="mb-1">&copy; 2025 PORTA-PERFIL</p>
+      <p>Desenvolvido para auxiliar no cálculo de materiais para portões e perfis de alumínio.</p>
+    </footer>
+  </div>
+
+  <!-- JavaScript Dependencies -->
+  <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@4.6.0/dist/js/bootstrap.bundle.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.3.1/jspdf.umd.min.js"></script>
+  
+  <!-- Utility functions -->
+  <script type="module">
+    // Funções utilitárias básicas necessárias para a demo funcionar independentemente
+    function mostrarNotificacao(mensagem, tipo = 'info') {
+      const notificacaoEl = document.getElementById('notificacao');
+      if (!notificacaoEl) {
+        console.error('Elemento de notificação não encontrado');
+        alert(mensagem);
+        return;
+      }
+      
+      // Limpar notificações anteriores
+      clearTimeout(window.notificacaoTimeout);
+      
+      // Definir classe de acordo com o tipo
+      notificacaoEl.className = 'notificacao';
+      notificacaoEl.classList.add(`notificacao-${tipo}`);
+      
+      // Definir texto
+      notificacaoEl.textContent = mensagem;
+      
+      // Mostrar notificação
+      notificacaoEl.classList.add('mostrar');
+      
+      // Esconder automaticamente após 5 segundos
+      window.notificacaoTimeout = setTimeout(() => {
+        notificacaoEl.classList.remove('mostrar');
+      }, 5000);
+    }
+    
+    // Expor para uso global
+    window.mostrarNotificacao = mostrarNotificacao;
+    
+    function formatarMoeda(valor) {
+      if (isNaN(valor) || valor === null) {
+        return 'R$ 0,00';
+      }
+      
+      return valor.toLocaleString('pt-BR', { 
+        style: 'currency', 
+        currency: 'BRL' 
+      });
+    }
+    
+    function mostrarErroValidacao(campo, mensagem) {
+      // Adicionar classe de erro ao campo
+      campo.classList.add('is-invalid');
+      
+      // Verificar se existe div de erro
+      if (campo.id) {
+        const errorDiv = document.getElementById(`${campo.id}Error`);
+        if (errorDiv) {
+          errorDiv.textContent = mensagem;
+          return;
+        }
+      }
+      
+      // Mostrar notificação como fallback
+      mostrarNotificacao(mensagem, 'warning');
+    }
+    
+    function removerErroValidacao(campo) {
+      campo.classList.remove('is-invalid');
+    }
+    
+    // Expor para uso global
+    window.mostrarErroValidacao = mostrarErroValidacao;
+    window.removerErroValidacao = removerErroValidacao;
+    window.formatarMoeda = formatarMoeda;
+  </script>
+  
+  <!-- Imports para calculadora -->
+  <script type="module">
+    import { calcularPerfisPortao, calcularPesoPortao, calcularCustoPerfilPortao, calcularParafusos, calcularAcessorios } from './js/calculo-materiais.js';
+    
+    // Calculadora
+    function calcularMateriais() {
+      // Obter valores do formulário
+      const dimensoes = {
+        largura: parseFloat(document.getElementById('larguraPortao').value),
+        altura: parseFloat(document.getElementById('alturaPortao').value),
+        espessuraPerfil: parseFloat(document.getElementById('espessuraPerfil').value)
+      };
+      
+      const precos = {
+        perfilPorMetro: parseFloat(document.getElementById('precoPerfilMetro').value),
+        parafusoPorUnidade: parseFloat(document.getElementById('precoParafusoUnidade').value),
+        dobradicaPorUnidade: parseFloat(document.getElementById('precoDobradicaUnidade').value),
+        fechaduraPorUnidade: parseFloat(document.getElementById('precoFechaduraUnidade').value),
+        pesoPorMetro: parseFloat(document.getElementById('pesoPorMetro').value)
+      };
+      
+      // Calcular
+      const metrosLineares = calcularPerfisPortao(dimensoes.largura, dimensoes.altura, dimensoes.espessuraPerfil);
+      const peso = calcularPesoPortao(metrosLineares, precos.pesoPorMetro || 1.2);
+      const custoPerfil = calcularCustoPerfilPortao(metrosLineares, precos.perfilPorMetro);
+      
+      const qtdeParafusos = calcularParafusos(metrosLineares);
+      const custoParafusos = qtdeParafusos * precos.parafusoPorUnidade;
+      
+      const { dobradiças, fechaduras } = calcularAcessorios(dimensoes.largura, dimensoes.altura);
+      const custoDobradiças = dobradiças * precos.dobradicaPorUnidade;
+      const custoFechaduras = fechaduras * precos.fechaduraPorUnidade;
+      
+      const custoTotal = custoPerfil + custoParafusos + custoDobradiças + custoFechaduras;
+      
+      // Exibir resultados
+      document.getElementById('resultadoLargura').textContent = `${dimensoes.largura} m`;
+      document.getElementById('resultadoAltura').textContent = `${dimensoes.altura} m`;
+      document.getElementById('resultadoEspessura').textContent = `${dimensoes.espessuraPerfil} cm`;
+      
+      document.getElementById('resultadoPerfilTotal').textContent = `${metrosLineares.toFixed(2)} metros`;
+      document.getElementById('resultadoPeso').textContent = `${peso.toFixed(2)} kg`;
+      document.getElementById('resultadoParafusos').textContent = `${qtdeParafusos} unidades`;
+      document.getElementById('resultadoDobradiças').textContent = `${dobradiças} unidades`;
+      document.getElementById('resultadoFechaduras').textContent = `${fechaduras} unidades`;
+      
+      document.getElementById('resultadoCustoPerfil').textContent = formatarMoeda(custoPerfil);
+      document.getElementById('resultadoCustoParafusos').textContent = formatarMoeda(custoParafusos);
+      document.getElementById('resultadoCustoDobradiças').textContent = formatarMoeda(custoDobradiças);
+      document.getElementById('resultadoCustoFechaduras').textContent = formatarMoeda(custoFechaduras);
+      document.getElementById('resultadoCustoTotal').textContent = formatarMoeda(custoTotal);
+      
+      // Exibir seção de resultados
+      document.getElementById('resultadoCalculoMateriais').classList.remove('d-none');
+      
+      // Rolar para resultados
+      document.getElementById('resultadoCalculoMateriais').scrollIntoView({ behavior: 'smooth' });
+      
+      mostrarNotificacao('Cálculo realizado com sucesso!', 'success');
+    }
+    
+    function limparCalculadora() {
+      document.getElementById('calculadoraMateriaisForm').reset();
+      document.getElementById('resultadoCalculoMateriais').classList.add('d-none');
+      mostrarNotificacao('Formulário limpo', 'info');
+    }
+    
+    function imprimirResultado() {
+      window.print();
+    }
+    
+    // Inicialização
+    document.addEventListener('DOMContentLoaded', function() {
+      document.getElementById('calcularMateriaisBtn').addEventListener('click', calcularMateriais);
+      document.getElementById('limparCalculadoraBtn').addEventListener('click', limparCalculadora);
+      document.getElementById('imprimirResultadoBtn')?.addEventListener('click', imprimirResultado);
+      
+      // Configuração inicial
+      mostrarNotificacao('Calculadora inicializada. Insira as dimensões do portão e preços dos materiais.', 'info');
+    });
+  </script>
+</body>
+</html>
